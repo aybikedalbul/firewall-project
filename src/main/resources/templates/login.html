@@ -1,28 +1,58 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
+    <!-- AdminLTE CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.1.0/css/adminlte.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.1.0/js/adminlte.min.js"></script>
+
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giriş Yap</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AdminLTE CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.1.0/css/adminlte.min.css">
 </head>
-<body>
-<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <div class="card p-4" style="width: 300px;">
-        <h2 class="text-center">Giriş Yap</h2>
-        <form th:action="@{/login}" method="post">
-            <div class="form-group">
-                <label for="username">Kullanıcı Adı:</label>
-                <input type="text" id="username" name="username" class="form-control" placeholder="Kullanıcı adınızı girin" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Şifre:</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="Şifrenizi girin" required>
-            </div>
-            <div class="form-group button-group">
-                <button type="submit" class="btn btn-primary">Giriş Yap</button>
-                <a th:href="@{/register}" class="btn btn-secondary">Kayıt Ol</a>
-            </div>
-        </form>
+<body class="hold-transition login-page">
+<div class="login-box">
+    <div class="login-logo">
+        <a href="#"><b>Giriş</b> Yap</a>
+    </div>
+    <div class="card">
+        <div class="card-body login-card-body">
+            <form th:action="@{/login}" method="post">
+                <div class="input-group mb-3">
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Kullanıcı Adı" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-user"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Şifre" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <a th:href="@{/register}" class="btn btn-secondary">Kayıt Ol</a>
+                    </div>
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary btn-block">Giriş Yap</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 </body>

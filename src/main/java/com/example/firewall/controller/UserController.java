@@ -1,6 +1,8 @@
 package com.example.firewall.controller;
 
+import com.example.firewall.model.FirewallRule;
 import com.example.firewall.model.User;
+import com.example.firewall.service.NetworkUtils;
 import com.example.firewall.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 public class UserController {
