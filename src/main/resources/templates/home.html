@@ -54,6 +54,7 @@
                         <th>Durum</th>
                         <th>Süreç Adı</th>
                         <th>Bağlantı Süresi</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -77,45 +78,70 @@
 
 <script>
     $(document).ready(function() {
-        var table = $('#firewallTable').DataTable({
-            "ajax": {
-                "url": "/getNetworkData",  // JSON döndüren controller methodun URL'si
-                "dataSrc": "data",
-                "beforeSend": function() {
-                    $('#firewallTable').after('<div id="loading">Veri yükleniyor...</div>');
-                },
-                "complete": function() {
-                    $('#loading').remove();
-                }
+    var table = $('#firewallTable').DataTable({
+        "ajax": {
+            "url": "/getNetworkData",  // URL for the JSON data
+            "dataSrc": "data",
+            "beforeSend": function() {
+                $('#firewallTable').after('<div id="loading">Veri yükleniyor...</div>');
             },
-            "columns": [
-                { "data": "localIp" },
-                { "data": "localPort" },
-                { "data": "remoteIp" },
-                { "data": "remotePort" },
-                { "data": "protocol" },
-                { "data": "state" },
-                { "data": "processName" },
-                { "data": "duration" }
-            ],
-            "paging": true,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "pageLength": 10,
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Turkish.json"
+            "complete": function() {
+                $('#loading').remove();
             }
-        });
-
-        // 20 saniyede bir tabloyu yenile
-        setInterval(function() {
-            table.ajax.reload(null, false);
-        }, 20000); // 20 saniye
+        },
+        "columns": [
+            { "data": "localIp" },
+            { "data": "localPort" },
+            { "data": "remoteIp" },
+            { "data": "remotePort" },
+            { "data": "protocol" },
+            { "data": "state" },
+            { "data": "processName" },
+            { "data": "duration" },
+            {
+                "data": null, // Use null because this column does not come from the data source
+                "defaultContent": `
+                    <button class="btn btn-sm btn-primary edit-btn">Edit</button>
+                    <button class="btn btn-sm btn-danger delete-btn">Delete</button>`,
+                "orderable": false,
+                "searchable": false
+            }
+        ],
+        "paging": true,
+        "lengthChange": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+        "pageLength": 10,
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Turkish.json"
+        }
     });
+
+    // Handle click events for Edit and Delete buttons
+    $('#firewallTable tbody').on('click', '.edit-btn', function() {
+        var data = table.row($(this).parents('tr')).data();
+        var editUrl = `/edit-connection/${data.id}`;
+        window.location.href = editUrl; // Redirect to the edit page
+        // Implement the logic for editing here
+    });
+
+    $('#firewallTable tbody').on('click', '.delete-btn', function() {
+        var data = table.row($(this).parents('tr')).data();
+        if (confirm('Are you sure you want to delete the connection from ' + data.id + '?')) {
+            // Implement the delete functionality here
+            alert('Deleted connection from: ' + data.id);
+        }
+    });
+
+    // Refresh the table every 20 seconds
+    setInterval(function() {
+        table.ajax.reload(null, false);
+    }, 20000); // 20 seconds
+});
+
 
 </script>
 </body>

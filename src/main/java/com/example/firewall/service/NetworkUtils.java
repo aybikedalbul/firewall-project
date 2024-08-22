@@ -1,19 +1,27 @@
 package com.example.firewall.service;
 
-import com.example.firewall.model.FirewallRule;
-import org.springframework.stereotype.Service;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.firewall.model.FirewallRule;
+import com.example.firewall.repository.FirewallRuleRepository;
 
 @Service
 public class NetworkUtils {
 
-    public static List<FirewallRule> getNetworkConnections() {
+    @Autowired
+    private FirewallRuleRepository repository;
+
+    public List<FirewallRule> getNetworkConnections() {
         List<FirewallRule> rules = new ArrayList<>();
         String os = System.getProperty("os.name").toLowerCase();
+        long i = 0;
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
@@ -44,7 +52,8 @@ public class NetworkUtils {
                                 int remotePort = Integer.parseInt(parts[3].trim().replace("\"", ""));
                                 String processName = getProcessNameByPid(parts[5].replace("\"", ""));
                                 long startTime = System.currentTimeMillis(); // Zaman damgası için basit bir örnek
-                                rules.add(new FirewallRule(localIp, localPort, remoteIp, remotePort, "TCP", state, processName, startTime, 0L));
+                                i++;
+                                rules.add(new FirewallRule(i, localIp, localPort, remoteIp, remotePort, "TCP", state, processName, startTime, 0L));
                             }
                         }
                     }
@@ -59,7 +68,8 @@ public class NetworkUtils {
                                 int localPort = Integer.parseInt(ipPort[1].trim());
                                 String remoteIp = parts[5].split(":")[0];
                                 int remotePort = Integer.parseInt(parts[5].split(":")[1]);
-                                rules.add(new FirewallRule(localIp, localPort, remoteIp, remotePort, parts[0], state, null, System.currentTimeMillis(), 0L));
+                                i++;
+                                rules.add(new FirewallRule(i, localIp, localPort, remoteIp, remotePort, parts[0], state, null, System.currentTimeMillis(), 0L));
                             }
                         }
                     }
@@ -75,7 +85,27 @@ public class NetworkUtils {
             e.printStackTrace();
 
         }
+        repository.saveAll(rules);
         return rules;
+    }
+
+    public Optional<FirewallRule> getRuleById(Long id) {
+        return repository.findById(id);
+    }
+
+    public FirewallRule updateConnection(Long id, FirewallRule updatedRule) {
+        return repository.findById(id)
+                .map(existingConnection -> {
+                    existingConnection.setLocalIp(updatedRule.getLocalIp());
+                    existingConnection.setLocalPort(updatedRule.getLocalPort());
+                    existingConnection.setRemoteIp(updatedRule.getRemoteIp());
+                    existingConnection.setRemotePort(updatedRule.getRemotePort());
+                    existingConnection.setProtocol(updatedRule.getProtocol());
+                    existingConnection.setState(updatedRule.getState());
+                    existingConnection.setProcessName(updatedRule.getProcessName());
+                    existingConnection.setDuration(updatedRule.getDuration());
+                    return repository.save(existingConnection);
+                }).orElseThrow(() -> new RuntimeException("Connection not found"));
     }
 
     private static String getProcessNameByPid(String pid) {
