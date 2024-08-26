@@ -46,15 +46,11 @@
                 <table id="firewallTable" class="table table-bordered table-hover">
                     <thead>
                     <tr>
-                        <th>Yerel IP</th>
-                        <th>Yerel Port</th>
-                        <th>Hedef IP</th>
-                        <th>Hedef Port</th>
-                        <th>Protokol</th>
-                        <th>Durum</th>
-                        <th>Süreç Adı</th>
-                        <th>Bağlantı Süresi</th>
-                        <th>Actions</th>
+                        <th>ID</th>
+                        <th>Port</th>
+                        <th>Protocol</th>
+                        <th>Action</th>
+                        <th>Incoming IP</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -90,14 +86,11 @@
             }
         },
         "columns": [
-            { "data": "localIp" },
-            { "data": "localPort" },
-            { "data": "remoteIp" },
-            { "data": "remotePort" },
+            { "data": "id" },
+            { "data": "port" },
             { "data": "protocol" },
-            { "data": "state" },
-            { "data": "processName" },
-            { "data": "duration" },
+            { "data": "action" },
+            { "data": "ipFrom" },
             {
                 "data": null, // Use null because this column does not come from the data source
                 "defaultContent": `

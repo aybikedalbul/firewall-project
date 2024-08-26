@@ -3,6 +3,7 @@ package com.example.firewall.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,12 +35,23 @@ public class FirewallController {
 
     @GetMapping("/getNetworkData")
     @ResponseBody
-    public Map<String,Object> getNetworkData() {
+    public Map<String, Object> getNetworkData() {
         List<FirewallRule> rules = networkUtils.getNetworkConnections();
-        Map<String,Object> response = new HashMap<>();
-        response.put("data",rules);
+        List<Map<String, Object>> formattedRules = rules.stream().map(rule -> {
+            Map<String, Object> formattedRule = new HashMap<>();
+            formattedRule.put("id", rule.getId());
+            formattedRule.put("port", rule.getPort());
+            formattedRule.put("protocol", rule.getProtocol() != null ? rule.getProtocol() : "NULL");
+            formattedRule.put("action", rule.getAction().getDisplayName());
+            formattedRule.put("ipFrom", rule.getIpFrom());
+            return formattedRule;
+        }).collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", formattedRules);
         return response;
     }
+
 
     // Display the edit form
     @GetMapping("/edit-connection/{id}")
@@ -57,15 +69,15 @@ public class FirewallController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid connection ID: " + id));
 
         // Update the fields
-        existingRule.setLocalIp(updatedFirewallRule.getLocalIp());
-        existingRule.setLocalPort(updatedFirewallRule.getLocalPort());
-        existingRule.setRemoteIp(updatedFirewallRule.getRemoteIp());
-        existingRule.setRemotePort(updatedFirewallRule.getRemotePort());
-        existingRule.setProtocol(updatedFirewallRule.getProtocol());
-        existingRule.setState(updatedFirewallRule.getState());
-        existingRule.setProcessName(updatedFirewallRule.getProcessName());
-
-        firewallRuleRepository.save(existingRule);
+//        existingRule.setLocalIp(updatedFirewallRule.getLocalIp());
+//        existingRule.setLocalPort(updatedFirewallRule.getLocalPort());
+//        existingRule.setRemoteIp(updatedFirewallRule.getRemoteIp());
+//        existingRule.setRemotePort(updatedFirewallRule.getRemotePort());
+//        existingRule.setProtocol(updatedFirewallRule.getProtocol());
+//        existingRule.setState(updatedFirewallRule.getState());
+//        existingRule.setProcessName(updatedFirewallRule.getProcessName());
+//
+//        firewallRuleRepository.save(existingRule);
 
         return "redirect:/home";
     }
