@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,9 @@ import com.example.firewall.repository.FirewallRuleRepository;
 @Service
 public class NetworkUtils {
 
-    @Autowired
-    private FirewallRuleRepository repository;
 
     public List<FirewallRule> getNetworkConnections() {
-        final String ubuntuPassword = "1907";
+        final String ubuntuPassword = "aybikekir%123!";
         List<FirewallRule> rules = new ArrayList<>();
 
         try {
@@ -77,6 +76,22 @@ public class NetworkUtils {
         }
         repository.saveAll(rules);
         return rules;
+    }
+
+    /**
+     *
+     */
+    @Autowired
+    private FirewallRuleRepository repository;
+
+    public boolean isPortAllowed(int port) {
+        List<FirewallRule> rules = repository.findAll();
+        for (FirewallRule rule : rules) {
+            if (rule.getPort().equals(String.valueOf(port)) && rule.getAction() == FirewallRule.Action.DENY_IN) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void parseFirewallRule(List<FirewallRule> rules, String[] parts, String idPart){
