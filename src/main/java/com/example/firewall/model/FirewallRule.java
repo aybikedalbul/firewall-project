@@ -2,8 +2,6 @@ package com.example.firewall.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -15,10 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FirewallRule {
 
-    public FirewallRule(long id, String port, String protocol, String action, String ipFrom) {
-    }
-
-    public enum Protocol {
+    enum Protocol{
         TCP,
         UDP
     }
@@ -38,131 +33,94 @@ public class FirewallRule {
         public String getDisplayName() {
             return displayName;
         }
-
-        public static Action fromString(String action) {
-            for (Action a : Action.values()) {
-                if (a.displayName.equalsIgnoreCase(action)) {
-                    return a;
-                }
-            }
-            return null;
-        }
     }
+
 
     @Id
     private Long id;
 
-    @Column(nullable = false)
+    @Column()
     private String port;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column()
     private Protocol protocol;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Action action;
 
-    @Column(nullable = false)
+    @Column()
     private String ipFrom;
 
-    // Yeni Alanlar
-    @Column
-    private String localIp;
-
-    @Column
-    private String localPort;
-
-    @Column
-    private String remoteIp;
-
-    @Column
-    private String remotePort;
-
-    @Column
-    private String state;
-
-    @Column
-    private String processName;
-
-
-    public void setLocalIp(String localIp) {
-        this.localIp = localIp;
-    }
-
-    public String getLocalIp() {
-        return localIp;
-    }
-
-    public void setLocalPort(String localPort) {
-        this.localPort = localPort;
-    }
-
-    public String getLocalPort() {
-        return localPort;
-    }
-
-    public void setRemoteIp(String remoteIp) {
-        this.remoteIp = remoteIp;
-    }
-
-    public String getRemoteIp() {
-        return remoteIp;
-    }
-
-    public void setRemotePort(String remotePort) {
-        this.remotePort = remotePort;
-    }
-
-    public String getRemotePort() {
-        return remotePort;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setProcessName(String processName) {
-        this.processName = processName;
-    }
-
-    public String getProcessName() {
-        return processName;
-    }
-
-    public void setPort(String port) {
+    public FirewallRule(Long id, String port, String protocol, String action, String ipFrom) {
+        this.id = id;
         this.port = port;
+        setProtocol(protocol);
+        setAction(action);
+        this.ipFrom = ipFrom;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getPort() {
         return port;
     }
 
-    public void setProtocol(Protocol protocol) {
-        this.protocol = protocol;
+    public void setPort(String port) {
+        this.port = port;
     }
 
     public Protocol getProtocol() {
         return protocol;
     }
 
-    public void setAction(Action action) {
-        this.action = action;
+    public void setProtocol(String protocol) {
+        if (protocol != null) {
+            switch (protocol.toUpperCase()){
+                case "TCP":
+                    this.protocol = Protocol.TCP;
+                    break;
+                case "UDP":
+                    this.protocol = Protocol.UDP;
+                    break;
+
+            }
+        }else{
+            this.protocol = null;
+        }
     }
 
     public Action getAction() {
         return action;
     }
 
-    public void setIpFrom(String ipFrom) {
-        this.ipFrom = ipFrom;
+    public void setAction(String action) {
+        switch (action.toUpperCase()){
+            case "ALLOW IN":
+                this.action = Action.ALLOW_IN;
+                break;
+            case "ALLOW OUT":
+                this.action = Action.ALLOW_OUT;
+                break;
+            case "DENY IN":
+                this.action = Action.DENY_IN;
+                break;
+            case "DENY OUT":
+                this.action = Action.DENY_OUT;
+                break;
+        }
     }
 
     public String getIpFrom() {
         return ipFrom;
+    }
+
+    public void setIpFrom(String ipFrom) {
+        this.ipFrom = ipFrom;
     }
 }
