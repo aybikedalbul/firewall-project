@@ -51,6 +51,7 @@
                         <th>Protocol</th>
                         <th>Action</th>
                         <th>Incoming IP</th>
+                        <th>Actions</th> <!-- This is the new column for the buttons -->
                     </tr>
                     </thead>
                     <tbody>
@@ -74,68 +75,66 @@
 
 <script>
     $(document).ready(function() {
-    var table = $('#firewallTable').DataTable({
-        "ajax": {
-            "url": "/getNetworkData",  // URL for the JSON data
-            "dataSrc": "data",
-            "beforeSend": function() {
-                $('#firewallTable').after('<div id="loading">Veri yükleniyor...</div>');
+        var table = $('#firewallTable').DataTable({
+            "ajax": {
+                "url": "/getNetworkData",  // URL for the JSON data
+                "dataSrc": "data",
+                "beforeSend": function() {
+                    $('#firewallTable').after('<div id="loading">Veri yükleniyor...</div>');
+                },
+                "complete": function() {
+                    $('#loading').remove();
+                }
             },
-            "complete": function() {
-                $('#loading').remove();
+            "columns": [
+                { "data": "id" },
+                { "data": "port" },
+                { "data": "protocol" },
+                { "data": "action" },
+                { "data": "ipFrom" },
+                {
+                    "data": null, // Use null because this column does not come from the data source
+                    "defaultContent": `
+                        <button class="btn btn-sm btn-primary edit-btn">Edit</button>
+                        <button class="btn btn-sm btn-danger delete-btn">Delete</button>`,
+                    "orderable": false,
+                    "searchable": false
+                }
+            ],
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "pageLength": 10,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Turkish.json"
             }
-        },
-        "columns": [
-            { "data": "id" },
-            { "data": "port" },
-            { "data": "protocol" },
-            { "data": "action" },
-            { "data": "ipFrom" },
-            {
-                "data": null, // Use null because this column does not come from the data source
-                "defaultContent": `
-                    <button class="btn btn-sm btn-primary edit-btn">Allow</button>
-                    <button class="btn btn-sm btn-danger delete-btn">Deny</button>`,
-                "orderable": false,
-                "searchable": false
+        });
+
+        // Handle click events for Edit and Delete buttons
+        $('#firewallTable tbody').on('click', '.edit-btn', function() {
+            var data = table.row($(this).parents('tr')).data();
+            var port = data.port;
+            var editUrl = `/config_page?port=${port}`;
+            window.location.href = editUrl; // Redirect to the config_page.html with the port number
+        });
+
+        $('#firewallTable tbody').on('click', '.delete-btn', function() {
+            var data = table.row($(this).parents('tr')).data();
+            if (confirm('Are you sure you want to delete the connection from ' + data.id + '?')) {
+                // Implement the delete functionality here
+                alert('Deleted connection from: ' + data.id);
             }
-        ],
-        "paging": true,
-        "lengthChange": true,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-        "pageLength": 10,
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Turkish.json"
-        }
+        });
+
+        // Refresh the table every 20 seconds
+        setInterval(function() {
+            table.ajax.reload(null, false);
+        }, 20000); // 20 seconds
     });
-
-    // Handle click events for Edit and Delete buttons
-    $('#firewallTable tbody').on('click', '.edit-btn', function() {
-        var data = table.row($(this).parents('tr')).data();
-        var editUrl = `/edit-connection/${data.id}`;
-        window.location.href = editUrl; // Redirect to the edit page
-        // Implement the logic for editing here
-    });
-
-    $('#firewallTable tbody').on('click', '.delete-btn', function() {
-        var data = table.row($(this).parents('tr')).data();
-        if (confirm('Are you sure you want to delete the connection from ' + data.id + '?')) {
-            // Implement the delete functionality here
-            alert('Deleted connection from: ' + data.id);
-        }
-    });
-
-    // Refresh the table every 20 seconds
-    setInterval(function() {
-        table.ajax.reload(null, false);
-    }, 20000); // 20 seconds
-});
-
-
 </script>
 </body>
 </html>
