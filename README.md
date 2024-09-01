@@ -42,7 +42,6 @@ This **Firewall Project** was developed as part of an internship program to crea
 3. Apply rules to allow or block traffic based on port numbers.
 
 
-_Add screenshots of the web interface here._
 
 ## Version Information 🛠️
 
