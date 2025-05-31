@@ -1,4 +1,4 @@
-# 🔥 Firewall Project / Internship
+# 🔥 Firewall Project 
 
 ## Overview
 
